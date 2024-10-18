@@ -1,70 +1,113 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const diseases = [
+  'Fibrose Cística',
+  'Doença de Gaucher',
+  'Doença de Pompe',
+  'Esclerose Lateral',
+  'Doença de Huntington',
+  'Síndrome de Prader-Willi',
+  'Epidermólise Bolhosa',
+    
+];
 
-export default function HomeScreen() {
+const DiseaseList = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>
+          <Text style={styles.careText}>Care</Text>
+          <Text style={styles.mapText}>map</Text>
+        </Text>
+        <View style={styles.headerLine} />
+      </View>
+      {diseases.map((disease, index) => {
+        const scale = useRef(new Animated.Value(1)).current;
+
+        const handlePressIn = () => {
+          Animated.spring(scale, {
+            toValue: 1.1, 
+            friction: 3,
+            useNativeDriver: true,
+          }).start();
+        };
+
+        const handlePressOut = () => {
+          Animated.spring(scale, {
+            toValue: 1, 
+            friction: 3,
+            useNativeDriver: true,
+          }).start();
+        };
+
+        return (
+          <View key={index} style={styles.buttonContainer}>
+            <Animated.View style={{ transform: [{ scale }] }}>
+              <TouchableOpacity
+                style={styles.button}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
+                onPress={() => console.log(`Selecionado: ${disease}`)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.buttonText}>{disease}</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        );
+      })}
+    </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
+    paddingVertical: 80,
+  },
+  headerContainer: {
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 30,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: -7,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  careText: {
+    color: '#226752',
+    fontWeight: '700',
+  },
+  mapText: {
+    color: '#000',
+    fontWeight: '300',
+  },
+  headerLine: {
+    width: '90%',
+    height: 1,
+    backgroundColor: '#ccc',
+    marginTop: 8,
+  },
+  buttonContainer: {
+    marginVertical: 9,
+  },
+  button: {
+    backgroundColor: '#619C95',
+    borderRadius: 35,
+    paddingVertical: 17,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    overflow: 'hidden', 
+    minWidth: 200, 
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
+
+export default DiseaseList;
+
